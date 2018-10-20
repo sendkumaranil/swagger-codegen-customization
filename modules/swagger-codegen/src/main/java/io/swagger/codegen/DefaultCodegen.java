@@ -2238,7 +2238,12 @@ public class DefaultCodegen {
 
         if (parameters != null) {
             for (Parameter param : parameters) {
-                CodegenParameter p = fromParameter(param, imports);
+            	
+            	System.out.println("Param====="+param.getName()+"=="+param.getAccess()+"=="+param.getIn()+"=="+param.getPattern());
+                if(param !=null && param.getIn().equalsIgnoreCase("header")) {
+                	continue;
+                }
+            	CodegenParameter p = fromParameter(param, imports);
                 // rename parameters to make sure all of them have unique names
                 if (ensureUniqueParams) {
                     while (true) {
@@ -2265,7 +2270,8 @@ public class DefaultCodegen {
                 } else if (param instanceof PathParameter) {
                     pathParams.add(p.copy());
                 } else if (param instanceof HeaderParameter) {
-                    headerParams.add(p.copy());
+                    System.out.println("Header Param==="+p.copy());
+                	//headerParams.add(p.copy());
                 } else if (param instanceof CookieParameter) {
                     cookieParams.add(p.copy());
                 } else if (param instanceof BodyParameter) {
@@ -2311,7 +2317,7 @@ public class DefaultCodegen {
         op.bodyParams = addHasMore(bodyParams);
         op.pathParams = addHasMore(pathParams);
         op.queryParams = addHasMore(queryParams);
-        op.headerParams = addHasMore(headerParams);
+        //op.headerParams = addHasMore(headerParams);
         // op.cookieParams = cookieParams;
         op.formParams = addHasMore(formParams);
         op.requiredParams = addHasMore(requiredParams);
@@ -2459,10 +2465,10 @@ public class DefaultCodegen {
                 p.defaultValue = qp.getDefaultValue().toString();
             }
         } else if (param instanceof HeaderParameter) {
-            HeaderParameter hp = (HeaderParameter) param;
+           /* HeaderParameter hp = (HeaderParameter) param;
             if(hp.getDefaultValue() != null) {
                 p.defaultValue = hp.getDefaultValue().toString();
-            }
+            }*/
         } else if (param instanceof FormParameter) {
             FormParameter fp = (FormParameter) param;
             if(fp.getDefaultValue() != null) {
@@ -2697,7 +2703,7 @@ public class DefaultCodegen {
             p.required = true;
             p.isPathParam = true;
         } else if (param instanceof HeaderParameter) {
-            p.isHeaderParam = true;
+            //p.isHeaderParam = true;
         } else if (param instanceof CookieParameter) {
             p.isCookieParam = true;
         } else if (param instanceof BodyParameter) {

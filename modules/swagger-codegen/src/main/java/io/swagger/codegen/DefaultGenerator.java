@@ -439,6 +439,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         Map<String, List<CodegenOperation>> paths = processPaths(swagger.getPaths());
         Set<String> apisToGenerate = null;
         String apiNames = System.getProperty("apis");
+       
         if (apiNames != null && !apiNames.isEmpty()) {
             apisToGenerate = new HashSet<String>(Arrays.asList(apiNames.split(",")));
         }
@@ -461,15 +462,33 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                     }
                 });
                 Map<String, Object> operation = processOperations(config, tag, ops, allModels);
-
+                
                 operation.put("basePath", basePath);
                 operation.put("basePathWithoutHost", basePathWithoutHost);
                 operation.put("contextPath", contextPath);
                 operation.put("baseName", tag);
-                operation.put("apiPackage", config.apiPackage());
+                operation.put("apiPackage", config.apiPackage());                
                 operation.put("modelPackage", config.modelPackage());
                 operation.putAll(config.additionalProperties());
                 operation.put("classname", config.toApiName(tag));
+                
+                String apipackage=config.apiPackage();
+        		apipackage=apipackage.replace(".", ",");		
+        		List<String> words=Arrays.asList(apipackage.split(","));
+        		String apiName=words.get(3);
+        		String apiCamelize=apiName.substring(0, 1).toUpperCase()+apiName.substring(1);
+        		String servicePackage="com.myorg.app."+apiName;
+                
+        		operation.put("apiprefixname", apiCamelize);
+        		operation.put("servicepackage", servicePackage);
+        		
+        		if(config.toApiName(tag).contains("Resource")) {
+                	String serviceClassName=config.toApiName(tag);
+                	serviceClassName=serviceClassName.replaceAll("Resource", "");
+                	operation.put("serviceclassname", serviceClassName);
+                	operation.put("implclassname", serviceClassName);
+                }                                
+                                
                 operation.put("classVarName", config.toApiVarName(tag));
                 operation.put("importPath", config.toApiImport(tag));
                 operation.put("classFilename", config.toApiFilename(tag));

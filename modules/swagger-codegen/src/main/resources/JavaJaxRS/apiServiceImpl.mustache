@@ -1,8 +1,8 @@
-package {{package}}.impl;
+package {{servicepackage}}.impl;
 
-import {{package}}.*;
+
 import {{modelPackage}}.*;
-
+import {{servicepackage}}.{{apiprefixname}}{{serviceclassname}}Service;
 {{#imports}}import {{import}};
 {{/imports}}
 
@@ -20,7 +20,7 @@ import javax.validation.constraints.*;
 {{/useBeanValidation}}
 {{>generatedAnnotation}}
 {{#operations}}
-public class {{classname}}ServiceImpl extends {{classname}}Service {
+public class {{apiprefixname}}{{implclassname}}ServiceImpl extends {{apiprefixname}}{{serviceclassname}}Service {
     {{#operation}}
     @Override
     public Response {{nickname}}({{#allParams}}{{>serviceQueryParams}}{{>servicePathParams}}{{>serviceHeaderParams}}{{>serviceBodyParams}}{{>serviceFormParams}}, {{/allParams}}SecurityContext securityContext) throws NotFoundException {

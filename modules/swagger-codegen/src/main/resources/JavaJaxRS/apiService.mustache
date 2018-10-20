@@ -1,4 +1,4 @@
-package {{package}};
+package {{servicepackage}};
 
 import {{package}}.*;
 import {{modelPackage}}.*;
@@ -20,7 +20,7 @@ import javax.validation.constraints.*;
 {{/useBeanValidation}}
 {{>generatedAnnotation}}
 {{#operations}}
-public abstract class {{classname}}Service {
+public abstract class {{apiprefixname}}{{serviceclassname}}Service {
     {{#operation}}
     public abstract Response {{nickname}}({{#allParams}}{{>serviceQueryParams}}{{>servicePathParams}}{{>serviceHeaderParams}}{{>serviceBodyParams}}{{>serviceFormParams}},{{/allParams}}SecurityContext securityContext) throws NotFoundException;
     {{/operation}}

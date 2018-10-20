@@ -38,7 +38,7 @@ public abstract class AbstractJavaJAXRSServerCodegen extends AbstractJavaCodegen
     public AbstractJavaJAXRSServerCodegen() {
         super();
 
-        sourceFolder = "src/gen/java";
+        sourceFolder = "src/java";
         invokerPackage = "io.swagger.api";
         artifactId = "swagger-jaxrs-server";
         dateLibrary = "legacy"; //TODO: add joda support to all jax-rs
@@ -218,25 +218,36 @@ public abstract class AbstractJavaJAXRSServerCodegen extends AbstractJavaCodegen
             return "DefaultApi";
         }
         computed = sanitizeName(computed);
-        return camelize(computed) + "Api";
+        return camelize(computed) + "Resource";
     }
 
     @Override
     public String apiFilename(String templateName, String tag) {
         String result = super.apiFilename(templateName, tag);
-
-        if ( templateName.endsWith("Impl.mustache") ) {
+        if ( templateName.endsWith("Impl.mustache") ) {        	
             int ix = result.lastIndexOf('/');
-            result = result.substring(0, ix) + "/impl" + result.substring(ix, result.length() - 5) + "ServiceImpl.java";
+            String serviceImplPrefix=result.substring(0, ix) + "/impl" + result.substring(ix, result.length() - 5);            
+            
+            
+            if(serviceImplPrefix.contains("Resource")) {
+            	serviceImplPrefix=serviceImplPrefix.replaceAll("Resource$", "");
+            }
+            result = serviceImplPrefix+ "ServiceImpl.java";            
             result = result.replace(apiFileFolder(), implFileFolder(implFolder));
+                        
         } else if ( templateName.endsWith("Factory.mustache") ) {
             int ix = result.lastIndexOf('/');
             result = result.substring(0, ix) + "/factories" + result.substring(ix, result.length() - 5) + "ServiceFactory.java";
             result = result.replace(apiFileFolder(), implFileFolder(implFolder));
-        } else if ( templateName.endsWith("Service.mustache") ) {
-            int ix = result.lastIndexOf('.');
-            result = result.substring(0, ix) + "Service.java";
-        }
+        } else if ( templateName.endsWith("Service.mustache") ) {            
+        	int ix = result.lastIndexOf('.');        	
+        	 String serviceFilePrefix=result.substring(0, ix);        	 
+        	 if(serviceFilePrefix.contains("Resource")) {
+        		 serviceFilePrefix= serviceFilePrefix.replaceAll("Resource$", "");
+             }        	        	        	                        
+            result = serviceFilePrefix + "Service.java";
+            result=result.replace("resource", "service");
+        }       
         return result;
     }
 
